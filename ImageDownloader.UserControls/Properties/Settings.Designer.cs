@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ImageDownloader.Properties {
+namespace ImageDownloader.Views.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

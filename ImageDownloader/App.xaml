@@ -1,9 +1,16 @@
-﻿<Application x:Class="ImageDownloader.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ImageDownloader"
-             StartupUri="MainWindow.xaml">
+﻿<Application
+    x:Class="ImageDownloader.Views.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ImageDownloader.Views">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="./Apperance/Controls/Buttons.xaml" />
+                <ResourceDictionary Source="./Apperance/Controls/TextBoxes.xaml" />
+                <ResourceDictionary Source="./Apperance/Controls/Images.xaml" />
+                <ResourceDictionary Source="./Apperance/Controls/ProgressBars.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
