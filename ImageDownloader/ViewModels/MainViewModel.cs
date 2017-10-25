@@ -91,7 +91,7 @@ namespace ImageDownloader.ViewModels
                               vm => vm.ThirdImageDownloaderViewModel.DownloadingProgress)
                 .Subscribe(p =>
                 {
-                    TotalDownloadingProgress = (p.Item1 + p.Item2 + p.Item3) / (_countActiveDownloading != 0 ? _countActiveDownloading : 1);
+                    TotalDownloadingProgress = (p.Item1 + p.Item2 + p.Item3) / (CountActiveDownloading != 0 ? CountActiveDownloading : 1);
                 });
 
             this.WhenAnyValue(vm => vm.TotalDownloadingProgress)
