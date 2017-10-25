@@ -18,8 +18,9 @@
                 Command="{Binding StopDownloadCommand}"
                 Content="Стоп" />
         </StackPanel>
-        <Image Source="{Binding SourceImage}" />
-
+        <Border Style="{StaticResource ImageBOrderStyle}">
+            <Image Source="{Binding SourceImage}" />
+        </Border>
 
     </DockPanel>
 </UserControl>

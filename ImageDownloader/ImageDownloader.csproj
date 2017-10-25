@@ -83,6 +83,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\ProgressConverter.cs" />
     <Compile Include="Enums\DownloadingState.cs" />
     <Compile Include="Models\Interfaces\IFileDownloader.cs" />
     <Compile Include="ViewFactory.cs" />
@@ -92,6 +93,10 @@
     <Compile Include="Views\ImageDownloaderView.xaml.cs">
       <DependentUpon>ImageDownloaderView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Apperance\Controls\Borders.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Apperance\Controls\Buttons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

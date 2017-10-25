@@ -17,7 +17,6 @@ namespace ImageDownloader.Models
     {
         private CancellationTokenSource _cancelationTokenSource;
 
-
         public async Task<byte[]> Download(string Url, Action<double> progress)
         {
             try
@@ -35,14 +34,14 @@ namespace ImageDownloader.Models
                 if (!_cancelationTokenSource.IsCancellationRequested)
                     throw;
             }
-    
             return new byte[0];
-            
         }
 
         public void Cancel()
         {
-            _cancelationTokenSource?.Cancel();
+            if (_cancelationTokenSource is null)
+                throw new InvalidOperationException("Загрузка не была запущена");
+            _cancelationTokenSource.Cancel();
         }
     }
 }

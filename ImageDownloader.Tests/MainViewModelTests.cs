@@ -19,7 +19,7 @@ namespace ImageDownloader.Tests
     public class MainViewModelTests
     {
 
-        [Test, TestCaseSource(typeof(MainViewModelTestDataCase), "TestCasesForThreeDownoading")]     
+        [Test, TestCaseSource(typeof(MainViewModelTestDataCase), "TestCasesForThreeDownoading")]
         public async Task<double> CalculateTotalProgressWhenAllDownloading(double firstProgress, double secondProgress, double thirdProgress)
         {
             var mockfirtFileDownloader = Substitute.For<IFileDownloader>();
@@ -72,40 +72,5 @@ namespace ImageDownloader.Tests
 
             return mainViewModel.TotalDownloadingProgress;
         }
-
-        [Test]
-        public async Task ClearStatesDownloadingWhenAllComlited()
-        {
-            var percentage = 100.0d;
-            var mockfirtFileDownloader = Substitute.For<IFileDownloader>();
-            mockfirtFileDownloader
-                .When(x => x.Download(Arg.Any<string>(), Arg.Any<Action<double>>()))
-                .Do(x => x.Arg<Action<double>>().Invoke(percentage));
-
-            var mockSecondFileDownloader = Substitute.For<IFileDownloader>();
-            mockSecondFileDownloader
-                .When(x => x.Download(Arg.Any<string>(), Arg.Any<Action<double>>()))
-                .Do(x => x.Arg<Action<double>>().Invoke(percentage));
-
-            var mockThirdFileDownloader = Substitute.For<IFileDownloader>();
-            mockThirdFileDownloader
-                .When(x => x.Download(Arg.Any<string>(), Arg.Any<Action<double>>()))
-                .Do(x => x.Arg<Action<double>>().Invoke(percentage));
-
-            var firstImageDownloaderViewModel = new ImageDownloaderViewModel(mockfirtFileDownloader, new ViewFactory());
-            var secondImageDownloaderViewModel = new ImageDownloaderViewModel(mockSecondFileDownloader, new ViewFactory());
-            var thirdImageDownloaderViewModel = new ImageDownloaderViewModel(mockThirdFileDownloader, new ViewFactory());
-
-            var mainViewModel = new MainViewModel(firstImageDownloaderViewModel,
-                                                  secondImageDownloaderViewModel,
-                                                  thirdImageDownloaderViewModel);
-            await mainViewModel.DownloadAllAsync();
-
-            Assert.AreEqual(30.00, mainViewModel.TotalDownloadingProgress, 2);
-            //Assert.AreEqual(DownloadingState.Idle, firstImageDownloaderViewModel.DownloadingState);
-            //Assert.AreEqual(DownloadingState.Idle, secondImageDownloaderViewModel.DownloadingState);
-            //Assert.AreEqual(DownloadingState.Idle, thirdImageDownloaderViewModel.DownloadingState);
-        }
-
     }
 }

@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="./Apperance/Controls/TextBoxes.xaml" />
                 <ResourceDictionary Source="./Apperance/Controls/Images.xaml" />
                 <ResourceDictionary Source="./Apperance/Controls/ProgressBars.xaml" />
+                <ResourceDictionary Source="./Apperance/Controls/Borders.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

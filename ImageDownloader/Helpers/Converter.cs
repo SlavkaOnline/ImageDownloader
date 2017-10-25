@@ -15,7 +15,6 @@ namespace ImageDownloader.Helpers
             if (imageData == null || imageData.Length == 0)
                 throw new ArgumentException();
 
-
             var image = new BitmapImage();
             using (var mem = new MemoryStream(imageData))
             {

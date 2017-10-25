@@ -10,6 +10,5 @@ namespace ImageDownloader.Enums
     {
         Idle,
         Downloading,
-        Downloaded
     }
 }

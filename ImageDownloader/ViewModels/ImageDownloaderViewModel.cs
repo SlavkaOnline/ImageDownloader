@@ -7,6 +7,7 @@ using ReactiveUI;
 using System;
 using System.Net;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
@@ -19,8 +20,7 @@ namespace ImageDownloader.ViewModels
         private readonly IFileDownloader _fileDownloader;
         private readonly IViewFactory _viewFactory;
 
-
-
+        #region property
         private BitmapImage _sourceImage;
         public BitmapImage SourceImage
         {
@@ -43,38 +43,36 @@ namespace ImageDownloader.ViewModels
         }
 
         private DownloadingState _downloadingState;
-        public DownloadingState DownloadingState
+        private DownloadingState DownloadingState
         {
             get => _downloadingState;
-            private set => this.RaiseAndSetIfChanged(ref _downloadingState, value);
+            set => this.RaiseAndSetIfChanged(ref _downloadingState, value);
         }
 
-       
+        private Subject<object> _onStarted;
+        public IObservable<object> OnStarted => _onStarted.AsObservable();
 
+        private Subject<object> _onStoped;
+        public IObservable<object> OnStoped => _onStoped.AsObservable();
+        #endregion
+
+
+        #region commands
 
         public ReactiveCommand StartDownloadCommand { get; private set; }
         public ReactiveCommand StopDownloadCommand { get; private set; }
 
+        #endregion
+
         public ImageDownloaderViewModel(IFileDownloader fileDownloader, IViewFactory viewFactory)
         {
             SourceImage = null;
+            DownloadingState = DownloadingState.Idle;
             _fileDownloader = fileDownloader;
             _viewFactory = viewFactory;
-            DownloadingState = DownloadingState.Idle;
-            Subscribe();
+            _onStarted = new Subject<object>();
+            _onStoped = new Subject<object>();
             InitCommands();
-        }
-
-        private void Subscribe()
-        {
-            this.WhenAnyValue(vm => vm.DownloadingState, state => state == DownloadingState.Idle)
-                .Subscribe(isIdle =>
-                {
-                    if (isIdle)
-                    {
-                        DownloadingProgress = 0.0;
-                    }
-                });
         }
 
         private void InitCommands()
@@ -94,17 +92,22 @@ namespace ImageDownloader.ViewModels
         {
             try
             {
+                _onStarted.OnNext(null);
                 DownloadingState = DownloadingState.Downloading;
+                SourceImage = null;
                 var dataBytes = await _fileDownloader.Download(Url, p => DownloadingProgress = p);
                 if (dataBytes.Length != 0)
                 {
                     SourceImage = Converter.FromBytesToImage(dataBytes);
                 }
-                DownloadingState = DownloadingState.Downloaded;
             }
-            catch(WebException e)
+            catch (WebException e)
             {
                 await _viewFactory.CreateExceptionViewDialogAsync(e.Message);
+                _onStoped.OnNext(null);
+            }
+            finally
+            {
                 DownloadingState = DownloadingState.Idle;
             }
         }
@@ -112,7 +115,7 @@ namespace ImageDownloader.ViewModels
         public void StopDownload()
         {
             _fileDownloader.Cancel();
-            DownloadingState = DownloadingState.Idle;
+            _onStoped.OnNext(null);
             DownloadingProgress = 0.0;
         }
 
