@@ -135,6 +135,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CaseData\MainViewModelTestDataCase.cs" />
     <Compile Include="ImageDownloaderViewModelTests.cs" />
     <Compile Include="MainViewModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

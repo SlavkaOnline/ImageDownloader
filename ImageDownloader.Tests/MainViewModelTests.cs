@@ -8,6 +8,10 @@ using System.ComponentModel;
 using ReactiveUI;
 using ImageDownloader.ViewModels;
 using ImageDownloader.Enums;
+using ImageDownloader.Models;
+using NSubstitute;
+using ImageDownloader.Models.Interfaces;
+using ImageDownloader.Tests.CaseData;
 
 namespace ImageDownloader.Tests
 {
@@ -15,31 +19,58 @@ namespace ImageDownloader.Tests
     public class MainViewModelTests
     {
 
-        [Test]
-        public void CalculateTotalProgressWhenAllDownloading()
+        [Test, TestCaseSource(typeof(MainViewModelTestDataCase), "TestCasesForThreeDownoading")]     
+        public async Task<double> CalculateTotalProgressWhenAllDownloading(double firstProgress, double secondProgress, double thirdProgress)
         {
-            var firstProgress = 33.4;
-            var secondProgress = 45.6;
-            var thirdProgress = 32.6;
-            var expectedProgress = (firstProgress + secondProgress + thirdProgress) / 3;
+            var mockfirtFileDownloader = Substitute.For<IFileDownloader>();
+            mockfirtFileDownloader
+                .When(x => x.Download(Arg.Any<string>(), Arg.Any<Action<double>>()))
+                .Do(x => x.Arg<Action<double>>().Invoke(firstProgress));
 
-            var firstImageDownloaderViewModel = new ImageDownloaderViewModel();
-            var secondImageDownloaderViewModel = new ImageDownloaderViewModel();
-            var thirdtImageDownloaderViewModel = new ImageDownloaderViewModel();
+            var mockSecondFileDownloader = Substitute.For<IFileDownloader>();
+            mockSecondFileDownloader
+                .When(x => x.Download(Arg.Any<string>(), Arg.Any<Action<double>>()))
+                .Do(x => x.Arg<Action<double>>().Invoke(secondProgress));
+
+            var mockThirdFileDownloader = Substitute.For<IFileDownloader>();
+            mockThirdFileDownloader
+                .When(x => x.Download(Arg.Any<string>(), Arg.Any<Action<double>>()))
+                .Do(x => x.Arg<Action<double>>().Invoke(thirdProgress));
+
+            var firstImageDownloaderViewModel = new ImageDownloaderViewModel(mockfirtFileDownloader);
+            var secondImageDownloaderViewModel = new ImageDownloaderViewModel(mockSecondFileDownloader);
+            var thirdtImageDownloaderViewModel = new ImageDownloaderViewModel(mockThirdFileDownloader);
 
             var mainViewModel = new MainViewModel(firstImageDownloaderViewModel,
                                                   secondImageDownloaderViewModel,
                                                   thirdtImageDownloaderViewModel);
+            await mainViewModel.DownloadAllAsync();
+            return mainViewModel.TotalDownloadingProgress;
+        }
 
-            firstImageDownloaderViewModel.DownloadingState = DownloadingState.Downloading;
-            secondImageDownloaderViewModel.DownloadingState = DownloadingState.Downloading;
-            thirdtImageDownloaderViewModel.DownloadingState = DownloadingState.Downloading;
+        [Test, TestCaseSource(typeof(MainViewModelTestDataCase), "TestCasesForTwoDownoading")]
+        public async Task<double> CalculateTotalProgressWhenTwoDownloading(double firstProgress, double secondProgress)
+        {
 
-            firstImageDownloaderViewModel.DownloadingProgress = firstProgress;
-            secondImageDownloaderViewModel.DownloadingProgress = secondProgress;
-            thirdtImageDownloaderViewModel.DownloadingProgress = thirdProgress;
+            var mockfirtFileDownloader = Substitute.For<IFileDownloader>();
+            mockfirtFileDownloader
+                .When(x => x.Download(Arg.Any<string>(), Arg.Any<Action<double>>()))
+                .Do(x => x.Arg<Action<double>>().Invoke(firstProgress));
 
-            Assert.AreEqual(expectedProgress, mainViewModel.TotalDownloadingProgress, 2);
+            var mockSecondFileDownloader = Substitute.For<IFileDownloader>();
+            mockSecondFileDownloader
+                .When(x => x.Download(Arg.Any<string>(), Arg.Any<Action<double>>()))
+                .Do(x => x.Arg<Action<double>>().Invoke(secondProgress));
+
+
+            var firstImageDownloaderViewModel = new ImageDownloaderViewModel(mockfirtFileDownloader);
+            var secondImageDownloaderViewModel = new ImageDownloaderViewModel(mockSecondFileDownloader);
+            var mainViewModel = new MainViewModel(firstImageDownloaderViewModel,
+                                                  secondImageDownloaderViewModel,
+                                                  new ImageDownloaderViewModel(new FileDownloader()));
+            await Task.WhenAll(firstImageDownloaderViewModel.StartDownloadAsync(), secondImageDownloaderViewModel.StartDownloadAsync());
+
+            return mainViewModel.TotalDownloadingProgress;
         }
     }
 }

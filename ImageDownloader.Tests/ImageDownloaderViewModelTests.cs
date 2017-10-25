@@ -1,4 +1,5 @@
-﻿using ImageDownloader.ViewModels;
+﻿using ImageDownloader.Models;
+using ImageDownloader.ViewModels;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace ImageDownloader.Tests
         [Test]
         public async Task UpdateSourceImageAfterDownloading()
         {
-            var imageDownloaderViewModel = new ImageDownloaderViewModel();
+            var imageDownloaderViewModel = new ImageDownloaderViewModel(new FileDownloader());
             imageDownloaderViewModel.Url = @"http://lifeandjoy.ru/uploads/posts/2015-07/1438256217_lifeandjoy.ru_02.jpg";
             await imageDownloaderViewModel.StartDownloadAsync();
             Assert.IsNotNull(imageDownloaderViewModel.SourceImage);

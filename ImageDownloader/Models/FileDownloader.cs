@@ -1,4 +1,5 @@
 ﻿using ImageDownloader.Helpers;
+using ImageDownloader.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +13,7 @@ using System.Windows.Media.Imaging;
 
 namespace ImageDownloader.Models
 {
-    public class FileDownloader
+    public class FileDownloader : IFileDownloader
     {
         private CancellationTokenSource _cancelationTokenSource;
 

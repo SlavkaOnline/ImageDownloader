@@ -82,19 +82,6 @@ namespace ImageDownloader.ViewModels
                 {
                     TotalDownloadingProgress = (p.Item1 + p.Item2 + p.Item3 ) / CalculateActiveDownloads();
                 });
-
-            this.WhenAnyValue(vm => vm.TotalDownloadingProgress, p => Math.Abs(p - 100.00) < 0.001).Subscribe(isDownloaded =>
-            {
-                if (isDownloaded)
-                {
-                    FirtsImageDownloaderViewModel.DownloadingState = DownloadingState.Idle;
-                    SecondImageDownloaderViewModel.DownloadingState = DownloadingState.Idle;
-                    ThirdImageDownloaderViewModel.DownloadingState = DownloadingState.Idle;
-                    TotalDownloadingProgress = 100.00;
-                }
-            });
-
-
         }
 
         private int CalculateActiveDownloads()

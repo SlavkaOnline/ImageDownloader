@@ -1,6 +1,7 @@
 ﻿using ImageDownloader.Enums;
 using ImageDownloader.Helpers;
 using ImageDownloader.Models;
+using ImageDownloader.Models.Interfaces;
 using ReactiveUI;
 using System;
 using System.Reactive.Linq;
@@ -23,7 +24,7 @@ namespace ImageDownloader.ViewModels
         public double DownloadingProgress
         {
             get => _downloadingProgress;
-            set => this.RaiseAndSetIfChanged(ref _downloadingProgress, value);
+            private set => this.RaiseAndSetIfChanged(ref _downloadingProgress, value);
         }
 
         private string _url;
@@ -37,19 +38,19 @@ namespace ImageDownloader.ViewModels
         public DownloadingState DownloadingState
         {
             get => _downloadingState;
-            set => this.RaiseAndSetIfChanged(ref _downloadingState, value);
+            private set => this.RaiseAndSetIfChanged(ref _downloadingState, value);
         }
 
-        private FileDownloader _fileDownloader;
+        private readonly IFileDownloader _fileDownloader;
 
 
         public ReactiveCommand StartDownloadCommand { get; private set; }
         public ReactiveCommand StopDownloadCommand { get; private set; }
 
-        public ImageDownloaderViewModel()
+        public ImageDownloaderViewModel(IFileDownloader fileDownloader)
         {
             SourceImage = null;
-            _fileDownloader = new FileDownloader();
+            _fileDownloader = fileDownloader;
             DownloadingState = DownloadingState.Idle;
             Subscribe();
             InitCommands();
