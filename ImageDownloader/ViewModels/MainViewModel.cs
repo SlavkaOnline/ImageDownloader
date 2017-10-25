@@ -1,8 +1,11 @@
 ﻿using ImageDownloader.Enums;
+using ImageDownloader.ViewModels.Interfaces;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,29 +14,16 @@ namespace ImageDownloader.ViewModels
 {
     public class MainViewModel : ReactiveObject
     {
+
         #region property
 
-        private ImageDownloaderViewModel _firtsImageDownloaderViewModel;
-        public ImageDownloaderViewModel FirtsImageDownloaderViewModel
+        private ObservableCollection<ImageDownloaderViewModel> _imageDownloaderViewModels;
+        public ObservableCollection<ImageDownloaderViewModel> ImageDownloaderViewModels
         {
-            get => _firtsImageDownloaderViewModel;
-            set => this.RaiseAndSetIfChanged(ref _firtsImageDownloaderViewModel, value);
+            get => _imageDownloaderViewModels ?? (_imageDownloaderViewModels = new ObservableCollection<ImageDownloaderViewModel>());
+            set => this.RaiseAndSetIfChanged(ref _imageDownloaderViewModels, value);
         }
-
-        private ImageDownloaderViewModel _secondImageDownloaderViewModel;
-        public ImageDownloaderViewModel SecondImageDownloaderViewModel
-        {
-            get => _secondImageDownloaderViewModel;
-            set => this.RaiseAndSetIfChanged(ref _secondImageDownloaderViewModel, value);
-        }
-
-        private ImageDownloaderViewModel _thirdImageDownloaderViewModel;
-        public ImageDownloaderViewModel ThirdImageDownloaderViewModel
-        {
-            get => _thirdImageDownloaderViewModel;
-            set => this.RaiseAndSetIfChanged(ref _thirdImageDownloaderViewModel, value);
-        }
-
+    
         private double _totalDownloadingProgress;
         public double TotalDownloadingProgress
         {
@@ -56,11 +46,9 @@ namespace ImageDownloader.ViewModels
 
         #endregion
 
-        public MainViewModel(ImageDownloaderViewModel firtsImageDownloaderViewModel, ImageDownloaderViewModel secondImageDownloaderViewModel, ImageDownloaderViewModel thirdImageDownloaderViewModel)
+        public MainViewModel(IEnumerable<ImageDownloaderViewModel> imageDownloaderViewModels)
         {
-            FirtsImageDownloaderViewModel = firtsImageDownloaderViewModel;
-            SecondImageDownloaderViewModel = secondImageDownloaderViewModel;
-            ThirdImageDownloaderViewModel = thirdImageDownloaderViewModel;
+            ImageDownloaderViewModels = new ObservableCollection<ImageDownloaderViewModel>(imageDownloaderViewModels);
             CountActiveDownloading = 0;
             TotalDownloadingProgress = 0;
             Subscribe();
@@ -70,38 +58,36 @@ namespace ImageDownloader.ViewModels
         private void InitCommands()
         {
             DownloadAllCommand = ReactiveCommand.CreateFromTask(() => DownloadAllAsync(),
-                                                                this.WhenAnyValue(vm => vm.CountActiveDownloading,
-                                                                                  vm => vm.FirtsImageDownloaderViewModel.Url,
-                                                                                  vm => vm.SecondImageDownloaderViewModel.Url,
-                                                                                  vm => vm.ThirdImageDownloaderViewModel.Url,
-                                                                                  (c, f, s, t) => !(string.IsNullOrEmpty(f) || string.IsNullOrEmpty(s) || string.IsNullOrEmpty(t)) && (c == 0)));
+                                                              this.WhenAnyValue(vm => vm.CountActiveDownloading, cout => cout == 0));
         }
 
         private void Subscribe()
         {
-            FirtsImageDownloaderViewModel.OnStarted.Subscribe(_ => CountActiveDownloading++);
-            FirtsImageDownloaderViewModel.OnStoped.Subscribe(_ => CountActiveDownloading--);
-            SecondImageDownloaderViewModel.OnStarted.Subscribe(_ => CountActiveDownloading++);
-            SecondImageDownloaderViewModel.OnStoped.Subscribe(_ => CountActiveDownloading--);
-            ThirdImageDownloaderViewModel.OnStarted.Subscribe(_ => CountActiveDownloading++);
-            ThirdImageDownloaderViewModel.OnStoped.Subscribe(_ => CountActiveDownloading--);
 
-            this.WhenAnyValue(vm => vm.FirtsImageDownloaderViewModel.DownloadingProgress,
-                              vm => vm.SecondImageDownloaderViewModel.DownloadingProgress,
-                              vm => vm.ThirdImageDownloaderViewModel.DownloadingProgress)
-                .Subscribe(p =>
+            foreach (var item in ImageDownloaderViewModels)
+            {
+                item.OnStarted.Subscribe(_ => CountActiveDownloading++);
+                item.OnStoped.Subscribe(_ => CountActiveDownloading--);
+
+                item.PropertyChanged += (s, e) =>
                 {
-                    TotalDownloadingProgress = (p.Item1 + p.Item2 + p.Item3) / (_countActiveDownloading != 0 ? _countActiveDownloading : 1);
-                });
+                    if (e.PropertyName == "DownloadingProgress")
+                    {
+                        TotalDownloadingProgress = ImageDownloaderViewModels.Sum(it => it.DownloadingProgress) / (CountActiveDownloading != 0 ? CountActiveDownloading : 1);
+                    }
+                };
+
+            }
 
             this.WhenAnyValue(vm => vm.TotalDownloadingProgress)
                 .Where(p => Math.Abs(p - 100.0) < 0.1)
                 .Subscribe(_ =>
                 {
                     CountActiveDownloading = 0;
-                    FirtsImageDownloaderViewModel.ClearState();
-                    SecondImageDownloaderViewModel.ClearState();
-                    ThirdImageDownloaderViewModel.ClearState();
+                    foreach (var item in ImageDownloaderViewModels)
+                    {
+                        item.ClearState();
+                    }
                     TotalDownloadingProgress = -1;
                 });
         }
@@ -109,9 +95,12 @@ namespace ImageDownloader.ViewModels
         public async Task DownloadAllAsync()
         {
             CountActiveDownloading = 0;
-            await Task.WhenAll(FirtsImageDownloaderViewModel.StartDownloadAsync(),
-                                SecondImageDownloaderViewModel.StartDownloadAsync(),
-                                ThirdImageDownloaderViewModel.StartDownloadAsync());
+            var downloadsList = new List<Task>();
+            foreach (var item in ImageDownloaderViewModels)
+            {
+                downloadsList.Add(item.StartDownloadAsync());
+            }
+            await Task.WhenAll(downloadsList);
         }
     }
 }

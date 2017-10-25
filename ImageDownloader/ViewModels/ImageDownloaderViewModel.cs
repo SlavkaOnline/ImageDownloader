@@ -79,10 +79,8 @@ namespace ImageDownloader.ViewModels
         {
             StartDownloadCommand = ReactiveCommand.CreateFromTask(() => StartDownloadAsync(),
                                                                    this.WhenAnyValue(vm => vm.DownloadingState,
-                                                                    state => state != DownloadingState.Downloading)
-                                                                    .Merge(
-                                                                    this.WhenAnyValue(vm => vm.Url,
-                                                                                     url => !string.IsNullOrEmpty(url))));
+                                                                    state => state != DownloadingState.Downloading ));
+
             StopDownloadCommand = ReactiveCommand.Create(() => StopDownload(),
                                                         this.WhenAnyValue(vm => vm.DownloadingState,
                                                         state => state == DownloadingState.Downloading));
@@ -104,6 +102,11 @@ namespace ImageDownloader.ViewModels
             catch (WebException e)
             {
                 await _viewFactory.CreateExceptionViewDialogAsync(e.Message);
+                _onStoped.OnNext(null);
+            }
+            catch (ArgumentNullException e)
+            {
+                await _viewFactory.CreateExceptionViewDialogAsync("Введите URL");
                 _onStoped.OnNext(null);
             }
             finally

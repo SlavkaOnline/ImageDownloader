@@ -21,12 +21,19 @@ namespace ImageDownloader.Views
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
             var builder = new ContainerBuilder();
             builder.RegisterType<FileDownloader>().As<IFileDownloader>();
             builder.RegisterType<ViewFactory>().As<IViewFactory>();
-            builder.RegisterType<ImageDownloaderViewModel>().AsSelf();
-            builder.RegisterType<MainViewModel>().AsSelf();
+
+            builder.RegisterType<ImageDownloaderViewModel>();
+            builder.Register(c => new List<ImageDownloaderViewModel>()
+            {
+                c.Resolve<ImageDownloaderViewModel>(),
+                c.Resolve<ImageDownloaderViewModel>(),
+                c.Resolve<ImageDownloaderViewModel>()
+            }).As<IEnumerable<ImageDownloaderViewModel>>();
+
+            builder.RegisterType<MainViewModel>();
             var container = builder.Build();
 
             var mainWindow = new MainWindow()

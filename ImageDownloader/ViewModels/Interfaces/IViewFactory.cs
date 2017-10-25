@@ -9,6 +9,5 @@ namespace ImageDownloader.ViewModels.Interfaces
     public interface IViewFactory
     {
         Task CreateExceptionViewDialogAsync(string message);
-        Task CreateInfoViewDialog(string message);
     }
 }

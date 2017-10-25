@@ -25,7 +25,7 @@ namespace ImageDownloader.Tests
             await imageDownloaderViewModel.StartDownloadAsync();
             Assert.IsNotNull(imageDownloaderViewModel.SourceImage);
         }
-        
+
         [Test]
         public async Task CreateExceptionMessageWhenDownloadFailed()
         {
@@ -38,7 +38,7 @@ namespace ImageDownloader.Tests
             var mockViewFactory = Substitute.For<IViewFactory>();
             mockViewFactory
                 .When(x => x.CreateExceptionViewDialogAsync(Arg.Any<string>()))
-                .Do( _ => isCReated = true);
+                .Do(_ => isCReated = true);
 
             var imageDownloaderViewModel = new ImageDownloaderViewModel(mockFileDownLoader, mockViewFactory);
             await imageDownloaderViewModel.StartDownloadAsync();

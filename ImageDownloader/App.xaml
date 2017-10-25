@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="./Apperance/Controls/Images.xaml" />
                 <ResourceDictionary Source="./Apperance/Controls/ProgressBars.xaml" />
                 <ResourceDictionary Source="./Apperance/Controls/Borders.xaml" />
+                <ResourceDictionary Source="./Apperance/Controls/UserControls.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

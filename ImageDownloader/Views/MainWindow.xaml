@@ -28,22 +28,19 @@
                 <TextBlock Text="{Binding TotalDownloadingProgress, Mode=OneWay, Converter={StaticResource ProgressConverter}}" />
             </StackPanel>
         </StackPanel>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <local:ImageDownloaderView
-                Grid.Column="0"
-                DataContext="{Binding FirtsImageDownloaderViewModel}" />
-            <local:ImageDownloaderView
-                Grid.Column="1"
-                DataContext="{Binding SecondImageDownloaderViewModel}" />
-            <local:ImageDownloaderView
-                Grid.Column="2"
-                DataContext="{Binding ThirdImageDownloaderViewModel}" />
-        </Grid>
-
+        <ItemsControl ItemsSource="{Binding ImageDownloaderViewModels}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:ImageDownloaderView
+                        DataContext="{Binding}"
+                        Style="{StaticResource ImageDownloaderFilStyle}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </DockPanel>
 </Window>

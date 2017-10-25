@@ -83,6 +83,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\PanelChildrenCountToWidth.cs" />
     <Compile Include="Converters\ProgressConverter.cs" />
     <Compile Include="Enums\DownloadingState.cs" />
     <Compile Include="Models\Interfaces\IFileDownloader.cs" />
@@ -110,6 +111,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Apperance\Controls\TextBoxes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Apperance\Controls\UserControls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

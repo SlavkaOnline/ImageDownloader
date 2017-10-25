@@ -15,10 +15,5 @@ namespace ImageDownloader
             MessageBox.Show(message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             return Task.CompletedTask;
         }
-
-        public Task CreateInfoViewDialog(string message)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

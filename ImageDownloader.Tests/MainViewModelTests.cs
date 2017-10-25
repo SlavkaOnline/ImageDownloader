@@ -41,9 +41,12 @@ namespace ImageDownloader.Tests
             var secondImageDownloaderViewModel = new ImageDownloaderViewModel(mockSecondFileDownloader, new ViewFactory());
             var thirdImageDownloaderViewModel = new ImageDownloaderViewModel(mockThirdFileDownloader, new ViewFactory());
 
-            var mainViewModel = new MainViewModel(firstImageDownloaderViewModel,
-                                                  secondImageDownloaderViewModel,
-                                                  thirdImageDownloaderViewModel);
+            var mainViewModel = new MainViewModel(new List<ImageDownloaderViewModel>
+                                                    {   firstImageDownloaderViewModel,
+                                                        secondImageDownloaderViewModel,
+                                                        thirdImageDownloaderViewModel
+                                                    });
+
             await mainViewModel.DownloadAllAsync();
             return mainViewModel.TotalDownloadingProgress;
         }
@@ -65,9 +68,12 @@ namespace ImageDownloader.Tests
 
             var firstImageDownloaderViewModel = new ImageDownloaderViewModel(mockfirtFileDownloader, new ViewFactory());
             var secondImageDownloaderViewModel = new ImageDownloaderViewModel(mockSecondFileDownloader, new ViewFactory());
-            var mainViewModel = new MainViewModel(firstImageDownloaderViewModel,
-                                                  secondImageDownloaderViewModel,
-                                                  new ImageDownloaderViewModel(new FileDownloader(), new ViewFactory()));
+
+            var mainViewModel = new MainViewModel(new List<ImageDownloaderViewModel>
+                                                    {   firstImageDownloaderViewModel,
+                                                        secondImageDownloaderViewModel,
+                                                        new ImageDownloaderViewModel(new FileDownloader(), new ViewFactory())
+                                                    });
             await Task.WhenAll(firstImageDownloaderViewModel.StartDownloadAsync(), secondImageDownloaderViewModel.StartDownloadAsync());
 
             return mainViewModel.TotalDownloadingProgress;
