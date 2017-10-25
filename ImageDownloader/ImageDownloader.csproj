@@ -85,7 +85,9 @@
     </ApplicationDefinition>
     <Compile Include="Enums\DownloadingState.cs" />
     <Compile Include="Models\Interfaces\IFileDownloader.cs" />
+    <Compile Include="ViewFactory.cs" />
     <Compile Include="ViewModels\ImageDownloaderViewModel.cs" />
+    <Compile Include="ViewModels\Interfaces\IViewFactory.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\ImageDownloaderView.xaml.cs">
       <DependentUpon>ImageDownloaderView.xaml</DependentUpon>

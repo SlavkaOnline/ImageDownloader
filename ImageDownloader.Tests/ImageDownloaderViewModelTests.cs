@@ -15,7 +15,7 @@ namespace ImageDownloader.Tests
         [Test]
         public async Task UpdateSourceImageAfterDownloading()
         {
-            var imageDownloaderViewModel = new ImageDownloaderViewModel(new FileDownloader());
+            var imageDownloaderViewModel = new ImageDownloaderViewModel(new FileDownloader(), new ViewFactory());
             imageDownloaderViewModel.Url = @"http://lifeandjoy.ru/uploads/posts/2015-07/1438256217_lifeandjoy.ru_02.jpg";
             await imageDownloaderViewModel.StartDownloadAsync();
             Assert.IsNotNull(imageDownloaderViewModel.SourceImage);

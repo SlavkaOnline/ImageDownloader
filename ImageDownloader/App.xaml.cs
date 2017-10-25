@@ -2,6 +2,7 @@
 using ImageDownloader.Models;
 using ImageDownloader.Models.Interfaces;
 using ImageDownloader.ViewModels;
+using ImageDownloader.ViewModels.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -23,6 +24,7 @@ namespace ImageDownloader.Views
 
             var builder = new ContainerBuilder();
             builder.RegisterType<FileDownloader>().As<IFileDownloader>();
+            builder.RegisterType<ViewFactory>().As<IViewFactory>();
             builder.RegisterType<ImageDownloaderViewModel>().AsSelf();
             builder.RegisterType<MainViewModel>().AsSelf();
             var container = builder.Build();

@@ -80,28 +80,31 @@ namespace ImageDownloader.ViewModels
                               vm => vm.ThirdImageDownloaderViewModel.DownloadingProgress)
                 .Subscribe(p =>
                 {
-                    TotalDownloadingProgress = (p.Item1 + p.Item2 + p.Item3 ) / CalculateActiveDownloads();
+                    TotalDownloadingProgress = (p.Item1 + p.Item2 + p.Item3) / CalculateActiveDownloads();
                 });
         }
 
         private int CalculateActiveDownloads()
         {
+
             var sum = (FirtsImageDownloaderViewModel.DownloadingState != DownloadingState.Idle ? 1 : 0)
-                      + (SecondImageDownloaderViewModel.DownloadingState != DownloadingState.Idle ? 1 : 0)
-                      + (ThirdImageDownloaderViewModel.DownloadingState != DownloadingState.Idle ? 1 : 0);
+                       + (SecondImageDownloaderViewModel.DownloadingState != DownloadingState.Idle ? 1 : 0)
+                       + (ThirdImageDownloaderViewModel.DownloadingState != DownloadingState.Idle ? 1 : 0);
+
             return sum;
         }
 
 
         public async Task DownloadAllAsync()
         {
-            TotalDownloadingProgress = 0.0;
-            var tasks = new List<Task>()
-            { FirtsImageDownloaderViewModel.StartDownloadAsync(),
-              SecondImageDownloaderViewModel.StartDownloadAsync(),
-              ThirdImageDownloaderViewModel.StartDownloadAsync()
-            };
-            await Task.WhenAll(tasks);
+            FirtsImageDownloaderViewModel.ClearState();
+            SecondImageDownloaderViewModel.ClearState();
+            ThirdImageDownloaderViewModel.ClearState();
+            await Task.WhenAll(FirtsImageDownloaderViewModel.StartDownloadAsync(),
+                                SecondImageDownloaderViewModel.StartDownloadAsync(),
+                                ThirdImageDownloaderViewModel.StartDownloadAsync());
+
+          
         }
 
 
