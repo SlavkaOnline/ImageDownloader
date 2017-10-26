@@ -103,8 +103,13 @@ namespace ImageDownloader.ViewModels
             }
             catch (WebException e)
             {
-                await _viewFactory.CreateExceptionViewDialogAsync(e.Message);
                 _onStoped.OnNext(null);
+                await _viewFactory.CreateExceptionViewDialogAsync(e.Message);
+            }
+            catch (ArgumentNullException e)
+            {
+                _onStoped.OnNext(null);
+                await _viewFactory.CreateExceptionViewDialogAsync("Введите URL");
             }
             finally
             {
